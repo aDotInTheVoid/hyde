@@ -1,0 +1,30 @@
+<!-- https://gist.github.com/bgadrian/68ec61ed90d7ebe879bd7f0ce4a2a701 -->
+<!-- Modified for png -->
+
+{{ $filename := .Get 0}}
+
+{{ $original := .Page.Resources.GetMatch (printf "*%s" $filename) }}
+{{ $text := .Get 1 }}
+
+{{ if eq $original nil }}
+    {{ errorf "cannot find file: %s" $filename }}
+{{ end}}
+
+{{ if ne $original.ResourceType "image" }}
+    {{ errorf "file %s is not an image" $filename }}
+{{ end }}
+
+{{ $thumb := ($original.Resize (printf "%dx" (div $original.Width (.Get 1)))).RelPermalink }}
+<p>
+    <img 
+        style="height: auto;" 
+        src="{{ $thumb }}"
+        width="{{ $original.Width }}"
+        height="{{ $original.Height }}" 
+        alt="{{ default $text "image" }}" 
+        data-src="{{$original.RelPermalink}}"
+        class="lazy" 
+    />
+</p>
+
+
